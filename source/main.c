@@ -1,9 +1,6 @@
-#include "kernel_utils.h"
+#include "decrypt.h"
 
-#define KERNEL_CHUNK_SIZE 0x1000
-#define KERNEL_CHUNK_NUMBER 0x69B8
-
-int sock;
+extern int DEBUG_SOCK;
 
 time_t prevtime;
 
@@ -34,20 +31,18 @@ int _main(struct thread* td) {
   server.sin_addr.s_addr = DEBUG_ADDR;                //in defines.h
   server.sin_port = sceNetHtons(DEBUG_PORT);          //in defines.h
   memset(server.sin_zero, 0, sizeof(server.sin_zero));
-  sock = sceNetSocket("debug", AF_INET, SOCK_STREAM, 0);
-  sceNetConnect(sock, (struct sockaddr *)&server, sizeof(server));
+  DEBUG_SOCK = sceNetSocket("debug", AF_INET, SOCK_STREAM, 0);
+  sceNetConnect(DEBUG_SOCK, (struct sockaddr *)&server, sizeof(server));
 
   int flag = 1;
-  sceNetSetsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int));
+  sceNetSetsockopt(DEBUG_SOCK, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int));
 #endif
 
-  uint64_t fw_version = get_fw_version();
-  jailbreak(fw_version);
-  
+  jailbreak();
 
   initSysUtil();
 
-  GetElapsed(0);
+  prevtime = time(0);
 
   printf_notification("Running PS4 PUP Decrypter");
   decrypt_pups("/mnt/usb0/safe.PS4UPDATE.PUP", "/mnt/usb0/%s.dec");

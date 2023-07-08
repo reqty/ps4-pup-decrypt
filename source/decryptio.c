@@ -1,13 +1,13 @@
 #include "decryptio.h"
 #include "defines.h"
-#include "debug.h"
+#include "pupdebug.h"
 
 #define chunksize 2097152
 
 ssize_t readbytes(const decrypt_state * state, size_t offset, size_t bytes, void * buffer, size_t buffersize) {
 
   if (bytes > buffersize) {
-     printfsocket("ReadBytes failed! - Error: Buffer is too small!\n");
+     printf_debug("ReadBytes failed! - Error: Buffer is too small!\n");
      return -1;
   }
 
@@ -29,11 +29,11 @@ ssize_t readbytes(const decrypt_state * state, size_t offset, size_t bytes, void
 
       if (result == -1) {
           int errcode = errno;
-          printfsocket("ReadBytes seek_set failed! - Error: %d (%s)\n", errcode, strerror(errcode));
+          printf_debug("ReadBytes seek_set failed! - Error: %d (%s)\n", errcode, strerror(errcode));
           return -1;
       }
 
-      printfsocket("Seeked to position " SSIZET_FMT " in input file.\n", result);
+      printf_debug("Seeked to position " SSIZET_FMT " in input file.\n", result);
   }
 
   size_t rchunksize = (bytes >= chunksize) ? chunksize : bytes;
@@ -54,13 +54,13 @@ ssize_t readbytes(const decrypt_state * state, size_t offset, size_t bytes, void
 
   if ((result == -1) || (bytesread != bytes)) {
       int errcode = errno;
-      printfsocket("Read failed; Read " SSIZET_FMT " of " SSIZET_FMT "bytes - Result: %d (%s)\n", bytesread, bytes,
+      printf_debug("Read failed; Read " SSIZET_FMT " of " SSIZET_FMT "bytes - Result: %d (%s)\n", bytesread, bytes,
 												  errcode,
 												  strerror(errcode));
       return -1;
   }
 
-//  printfsocket("Read " SSIZET_FMT " of " SSIZET_FMT " bytes to from input file.\n", bytesread, byte);
+//  printf_debug("Read " SSIZET_FMT " of " SSIZET_FMT " bytes to from input file.\n", bytesread, byte);
 
   return bytesread;
 
@@ -70,7 +70,7 @@ ssize_t readbytes(const decrypt_state * state, size_t offset, size_t bytes, void
 ssize_t writebytes(const decrypt_state * state, size_t offset, size_t bytes, void * buffer, size_t buffersize) {
 
   if (bytes > buffersize) {
-     printfsocket("WriteBytes failed! - Error: Buffer is too small!\n");
+     printf_debug("WriteBytes failed! - Error: Buffer is too small!\n");
      return -1;
   }
 
@@ -92,11 +92,11 @@ ssize_t writebytes(const decrypt_state * state, size_t offset, size_t bytes, voi
 
       if (result == -1) {
           int errcode = errno;
-          printfsocket("WriteBytes seek_set failed! - Error: %d (%s)\n", errcode, strerror(errcode));
+          printf_debug("WriteBytes seek_set failed! - Error: %d (%s)\n", errcode, strerror(errcode));
           return -1;
       }
 
-      printfsocket("Seeked to position " SSIZET_FMT " in output file.\n", result);
+      printf_debug("Seeked to position " SSIZET_FMT " in output file.\n", result);
   }
 
   size_t wchunksize = (bytes >= chunksize) ? chunksize : bytes;
@@ -117,13 +117,13 @@ ssize_t writebytes(const decrypt_state * state, size_t offset, size_t bytes, voi
 
   if ((result == -1) || (byteswritten != bytes)) {
       int errcode = errno;
-      printfsocket("Write failed; Write " SSIZET_FMT " of " SSIZET_FMT "bytes - Result: %d (%s)\n", byteswritten,
+      printf_debug("Write failed; Write " SSIZET_FMT " of " SSIZET_FMT "bytes - Result: %d (%s)\n", byteswritten,
 												    bytes, errcode,
 												    strerror(errcode));
       return -1;
   }
 
-//  printfsocket("Write " SSIZET_FMT " of " SSIZET_FMT " bytes to output file.\n", byteswritten, bytes);
+//  printf_debug("Write " SSIZET_FMT " of " SSIZET_FMT " bytes to output file.\n", byteswritten, bytes);
 
   return byteswritten;
 
